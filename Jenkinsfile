@@ -14,17 +14,32 @@ pipeline {
     }
      stages {
           stage("Compile") {
+	      when {
+                not {
+                    equals expected: true, actual: params.destroy
+                }
+              }
                steps {
                     sh "/usr/bin/mvn compile"
                }
           }
           stage("Unit test") {
+	      when {
+                not {
+                    equals expected: true, actual: params.destroy
+                }
+              }		  
                steps {
                     sh "/usr/bin/mvn test"
                }
           }
 	     
 	  stage('SonarQube analysis') {
+		when {
+                not {
+                    equals expected: true, actual: params.destroy
+                }
+              }	  
 	       steps {
                withSonarQubeEnv('sonarserver') {
                    sh '/usr/bin/mvn sonar:sonar'
@@ -33,6 +48,11 @@ pipeline {
           }
           
 	  stage("Quality Gate"){
+		      when {
+                not {
+                    equals expected: true, actual: params.destroy
+                }
+              }	  
 	       steps {
 		 script{      
                  timeout(time: 3, unit: 'MINUTES') { // Just in case something goes wrong, pipeline will be killed after a timeout
@@ -46,11 +66,21 @@ pipeline {
            }
      
           stage("Package") {
+		      when {
+                not {
+                    equals expected: true, actual: params.destroy
+                }
+              }	  
                steps {
                      sh "/usr/bin/mvn package"
                }
           }
          stage("Docker build"){
+	      when {
+                not {
+                    equals expected: true, actual: params.destroy
+                }
+              }		 
 	       steps {
                     sh 'docker version'
                     sh 'docker build -t devopswithdeepak-docker-webapp-demo .'
@@ -59,7 +89,12 @@ pipeline {
 		
                }
           }
-         stage("Docker Login") {    
+         stage("Docker Login") {
+	      when {
+                not {
+                    equals expected: true, actual: params.destroy
+                }
+              }		 
                steps {
 	            withCredentials([string(credentialsId: 'DOCKER_HUB_PASSWORD', variable: 'DOCKER_HUB_PASSWORD')]) {   
                      sh 'docker login -u deepak2717 -p $DOCKER_HUB_PASSWORD'
@@ -68,6 +103,11 @@ pipeline {
          }
 
          stage("Push Image to Docker Hub"){
+	      when {
+                not {
+                    equals expected: true, actual: params.destroy
+                }
+              }		 
                steps {
                      sh 'docker push  deepak2717/devopswithdeepak-docker-webapp-demo:devopswithdeepak-docker-webapp-demo'
                 }
