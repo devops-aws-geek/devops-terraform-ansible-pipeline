@@ -31,7 +31,7 @@ Vagrant.configure("2") do |config|
   config.vm.define "jenkinsserver" do |jenkinsserver|
     jenkinsserver.vm.box_download_insecure = true
     jenkinsserver.vm.box = "bento/ubuntu-24.04"
-    jenkinsserver.vm..box_version = "202404.26.0"
+    jenkinsserver.vm.box_version = "202404.26.0"
     jenkinsserver.vm.network "forwarded_port", guest: 8080, host: 8080
     jenkinsserver.vm.network "private_network", ip: "100.0.0.2"
     jenkinsserver.vm.hostname = "jenkinsserver"
@@ -45,8 +45,8 @@ Vagrant.configure("2") do |config|
   
     config.vm.define "sonarserver" do |sonarserver|
       sonarserver.vm.box_download_insecure = true
-      jenkinsserver.vm.box = "bento/ubuntu-24.04"
-      jenkinsserver.vm..box_version = "202404.26.0"
+      sonarserver.vm.box = "bento/ubuntu-24.04"
+      sonarserver.vm.box_version = "202404.26.0"
       sonarserver.vm.network "forwarded_port", guest: 9000, host: 9000
       sonarserver.vm.network "private_network", ip: "100.0.0.3"
       sonarserver.vm.hostname = "sonarserver"
