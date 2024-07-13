@@ -5,7 +5,9 @@ $script = <<ENDSCRIPT
   sudo apt install openjdk-17-jdk -y
   sudo wget -O /usr/share/keyrings/jenkins-keyring.asc https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
   echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian-stable binary/ | sudo tee /etc/apt/sources.list.d/jenkins.list > /dev/null
-  sudo apt upgrade -y
+  wget http://ftp.kr.debian.org/debian/pool/main/i/init-system-helpers/init-system-helpers_1.60_all.deb
+  sudo apt install ./init-system-helpers_1.60_all.deb
+  sudo apt-get install -y ca-certificates
   sudo apt-get update -y
   sudo apt-get install jenkins -y
   sudo systemctl enable jenkins
@@ -28,7 +30,8 @@ SCRIPT
 Vagrant.configure("2") do |config|
   config.vm.define "jenkinsserver" do |jenkinsserver|
     jenkinsserver.vm.box_download_insecure = true
-    jenkinsserver.vm.box = "hashicorp/bionic64"
+    jenkinsserver.vm.box = "bento/ubuntu-24.04"
+    jenkinsserver.vm..box_version = "202404.26.0"
     jenkinsserver.vm.network "forwarded_port", guest: 8080, host: 8080
     jenkinsserver.vm.network "private_network", ip: "100.0.0.2"
     jenkinsserver.vm.hostname = "jenkinsserver"
@@ -42,7 +45,8 @@ Vagrant.configure("2") do |config|
   
     config.vm.define "sonarserver" do |sonarserver|
       sonarserver.vm.box_download_insecure = true
-      sonarserver.vm.box = "hashicorp/bionic64"
+      jenkinsserver.vm.box = "bento/ubuntu-24.04"
+      jenkinsserver.vm..box_version = "202404.26.0"
       sonarserver.vm.network "forwarded_port", guest: 9000, host: 9000
       sonarserver.vm.network "private_network", ip: "100.0.0.3"
       sonarserver.vm.hostname = "sonarserver"
