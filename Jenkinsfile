@@ -85,7 +85,7 @@ pipeline {
                     sh 'docker version'
                     sh 'docker build -t devopswithdeepak-docker-webapp-demo .'
                     sh 'docker image list'
-                    sh 'docker tag devopswithdeepak-docker-webapp-demo deepak2717/devopswithdeepak-docker-webapp-demo:v1.0'
+                    sh 'docker tag devopswithdeepak-docker-webapp-demo deepak2717/devopswithdeepak-docker-webapp-demo:v2.0'
 		
                }
           }
@@ -109,7 +109,7 @@ pipeline {
                 }
               }		 
                steps {
-                     sh 'docker push  deepak2717/devopswithdeepak-docker-webapp-demo:v1.0'
+                     sh 'docker push  deepak2717/devopswithdeepak-docker-webapp-demo:v2.0'
                 }
          }
          stage('Plan') {
