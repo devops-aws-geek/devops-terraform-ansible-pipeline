@@ -20,7 +20,7 @@ pipeline {
                 }
               }
                steps {
-                    sh "/usr/bin/mvn compile"
+                    sh "/home/vagrant/sw/maven/bin/mvn compile"
                }
           }
           stage("Unit test") {
@@ -30,7 +30,7 @@ pipeline {
                 }
               }		  
                steps {
-                    sh "/usr/bin/mvn test"
+                    sh "/home/vagrant/sw/maven/bin/mvn test"
                }
           }
 	     
@@ -42,7 +42,7 @@ pipeline {
               }	  
 	       steps {
                withSonarQubeEnv('sonarserver') {
-                   sh '/usr/bin/mvn sonar:sonar'
+                   sh '/home/vagrant/sw/maven/bin/mvn sonar:sonar'
                    } // submitted SonarQube taskId is automatically attached to the pipeline context
 	       }
           }
@@ -72,7 +72,7 @@ pipeline {
                 }
               }	  
                steps {
-                     sh "/usr/bin/mvn package"
+                     sh "/home/vagrant/sw/maven/bin/mvn package"
                }
           }
          stage("Docker build"){
