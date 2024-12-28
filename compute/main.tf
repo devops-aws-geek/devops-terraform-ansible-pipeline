@@ -16,8 +16,8 @@ data "aws_ami" "linux" {
   owners = ["amazon"]
 }
 
-resource "aws_launch_template" "web" {
-  name_prefix            = "web"
+resource "aws_launch_template" "web-batch891" {
+  name_prefix            = "web-batch891"
   image_id               = data.aws_ami.linux.id
   key_name               = "batch906"
   instance_type          = var.web_instance_type
@@ -25,12 +25,12 @@ resource "aws_launch_template" "web" {
   user_data              = filebase64("install_apache.sh")
 
   tags = {
-    Name = "web"
+    Name = "web-batch891"
   }
 }
 
-resource "aws_autoscaling_group" "web" {
-  name                = "web"
+resource "aws_autoscaling_group" "web-batch891" {
+  name                = "web-batch891"
   vpc_zone_identifier = tolist(var.public_subnet)
   min_size            = 1
   max_size            = 3
