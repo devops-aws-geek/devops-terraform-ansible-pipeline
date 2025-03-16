@@ -20,7 +20,7 @@ pipeline {
                 }
               }
                steps {
-                    sh "/home/vagrant/sw/maven/bin/mvn compile"
+                    sh "/var/lib/jenkins/sw/maven/bin/mvn compile"
                }
           }
           stage("Unit test") {
@@ -30,7 +30,7 @@ pipeline {
                 }
               }		  
                steps {
-                    sh "/home/vagrant/sw/maven/bin/mvn test"
+                    sh "/var/lib/jenkins/sw/maven/bin/mvn test"
                }
           }
 	     
@@ -42,7 +42,7 @@ pipeline {
               }	  
 	       steps {
                withSonarQubeEnv('sonarserver') {
-                   sh '/home/vagrant/sw/maven/bin/mvn sonar:sonar'
+                   sh '/var/lib/jenkins/sw/maven/bin/mvn sonar:sonar'
                    } // submitted SonarQube taskId is automatically attached to the pipeline context
 	       }
           }
@@ -72,7 +72,7 @@ pipeline {
                 }
               }	  
                steps {
-                     sh "/home/vagrant/sw/maven/bin/mvn package"
+                     sh "/var/lib/jenkins/sw/maven/bin/mvn package"
                }
           }
          stage("Docker build"){
@@ -85,7 +85,7 @@ pipeline {
                     sh 'docker version'
                     sh 'docker build -t devopswithdeepak-docker-webapp-demo .'
                     sh 'docker image list'
-                    sh 'docker tag devopswithdeepak-docker-webapp-demo deepak2717/devopswithdeepak-docker-webapp-demo:v3.0'
+                    sh 'docker tag devopswithdeepak-docker-webapp-demo deepak2717/devopswithdeepak-docker-webapp-demo:v4.0'
 		
                }
           }
@@ -109,7 +109,7 @@ pipeline {
                 }
               }		 
                steps {
-                     sh 'docker push  deepak2717/devopswithdeepak-docker-webapp-demo:v3.0'
+                     sh 'docker push  deepak2717/devopswithdeepak-docker-webapp-demo:v4.0'
                 }
          }
          stage('Plan') {
