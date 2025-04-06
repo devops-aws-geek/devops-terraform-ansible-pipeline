@@ -2,7 +2,7 @@
 
 terraform {
   backend "s3" {
-    bucket = "tf-bucket-batch906"
+    bucket = "demo-cpastone-project"
     key    = "project/remote.tfstate"
     region = "us-east-1"
   }
