@@ -109,7 +109,7 @@ pipeline {
                 }
               }		 
                steps {
-                     sh 'docker push  deepak2717/devopswithdeepak-docker-webapp-demo:v4.0'
+                     sh 'docker push  deepak2717/devopswithdeepak-docker-webapp-demo:v5.0'
                 }
          }
          stage('Plan') {
