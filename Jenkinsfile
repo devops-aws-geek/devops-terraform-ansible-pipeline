@@ -60,11 +60,11 @@ pipeline {
           }
           
 	  stage("Quality Gate"){
-            anyOf {
+		      when {
+                anyOf {
                   branch 'feature'
                   branch 'dev'
                 }
-		      when {
                 not {
                     equals expected: true, actual: params.destroy
                 }
@@ -100,7 +100,6 @@ pipeline {
                 anyOf {
                   branch 'feature'
                   branch 'dev'
-                  branch 'main'
                 }
                 not {
                     equals expected: true, actual: params.destroy
@@ -120,7 +119,6 @@ pipeline {
                 anyOf {
                   branch 'feature'
                   branch 'dev'
-                  branch 'main'
                 } 
                 not {
                     equals expected: true, actual: params.destroy
@@ -138,7 +136,6 @@ pipeline {
                 anyOf {
                   branch 'feature'
                   branch 'dev'
-                  branch 'main'
                 }
                 not {
                     equals expected: true, actual: params.destroy
