@@ -238,7 +238,10 @@ pipeline {
                             tfvarsFile = "feature.tfvars"
                         } else {
                             error "No tfvars file defined for branch ${env.BRANCH_NAME}"
-                        } 
+                        }
+                        def tag = env.BRANCH_NAME.replace('/', '-')
+                        sh "terraform init -input=false"
+                        sh "terraform workspace select ${environment}-${tag} || terraform workspace new ${environment}-${tag}" 
                         sh "terraform apply -input=false -var-file=${tfvarsFile} tfplan"
                }
             }
@@ -260,8 +263,11 @@ pipeline {
                             tfvarsFile = "feature.tfvars"
                         } else {
                             error "No tfvars file defined for branch ${env.BRANCH_NAME}"
-                        } 
-           sh "terraform destroy -var-file=${tfvarsFile} --auto-approve"
+                        }
+           def tag = env.BRANCH_NAME.replace('/', '-')
+           sh "terraform init -input=false"
+           sh "terraform workspace select ${environment}-${tag} || terraform workspace new ${environment}-${tag}" 
+           sh "terraform destroy -input=false -var-file=${tfvarsFile} --auto-approve"
         }
 	}
     }
