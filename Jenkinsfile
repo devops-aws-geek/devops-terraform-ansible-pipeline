@@ -141,7 +141,7 @@ pipeline {
               }
          }
 
-         stage("Push Image to Docker Hub"){
+        stage("Push Image to Docker Hub"){
 	      when {
                 anyOf {
                   branch 'feature'
