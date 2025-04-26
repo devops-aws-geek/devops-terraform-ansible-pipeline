@@ -178,7 +178,7 @@ pipeline {
                             tfvarsFile = "dev.tfvars"
                         } else if (env.BRANCH_NAME == 'main') {
                             tfvarsFile = "main.tfvars"
-                        } else if (env.BRANCH_NAME.startsWith('feature/')) {
+                        } else if (env.BRANCH_NAME == 'feature') {
                             tfvarsFile = "feature.tfvars"
                         } else {
                             error "No tfvars file defined for branch ${env.BRANCH_NAME}"
@@ -236,7 +236,7 @@ pipeline {
                             tfvarsFile = "dev.tfvars"
                         } else if (env.BRANCH_NAME == 'main') {
                             tfvarsFile = "main.tfvars"
-                        } else if (env.BRANCH_NAME.startsWith('feature/')) {
+                        } else if (env.BRANCH_NAME == 'feature') {
                             tfvarsFile = "feature.tfvars"
                         } else {
                             error "No tfvars file defined for branch ${env.BRANCH_NAME}"
