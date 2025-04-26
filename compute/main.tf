@@ -16,8 +16,13 @@ data "aws_ami" "linux" {
   owners = ["amazon"]
 }
 
+resource "random_integer" "random" {
+  min = 1
+  max = 1000
+}
+
 resource "aws_launch_template" "web-batch891" {
-  name_prefix            = "web-batch891"
+  name_prefix            = "web-batch891-${random_integer.random.id}"
   image_id               = data.aws_ami.linux.id
   key_name               = "batch-910"
   instance_type          = var.web_instance_type
@@ -30,7 +35,7 @@ resource "aws_launch_template" "web-batch891" {
 }
 
 resource "aws_autoscaling_group" "web-batch891" {
-  name                = "web-batch891"
+  name                = "web-batch891-${random_integer.random.id}"
   vpc_zone_identifier = tolist(var.public_subnet)
   min_size            = 1
   max_size            = 3
