@@ -257,7 +257,7 @@ pipeline {
 	script {              
            sh "terraform init -input=false"
            sh "terraform workspace select ${environment}-${tag} || terraform workspace new ${environment}-${tag}" 
-           sh "terraform destroy -input=false -var-file=${tfvarsFile} --auto-approve"
+           sh "terraform destroy -input=false -var-file=${tag}.tfvars --auto-approve"
         }
 	}
     }
