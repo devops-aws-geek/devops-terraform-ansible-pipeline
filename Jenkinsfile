@@ -14,16 +14,14 @@ pipeline {
     }
      stages {
           stage("Compile") {
-	      when {
-            allOf {
-                anyOf {
-                     expression { env.BRANCH_NAME == 'dev' }
-                     expression { env.BRANCH_NAME == 'feature' }
+	        when {
+                 anyOf {
+                     branch 'dev'
+                     branch 'main'
                  }
-                not {
+                 not {
                     equals expected: true, actual: params.destroy
-                }
-            }
+                 }
             }
                steps {
                     sh "/var/lib/jenkins/sw/maven/bin/mvn compile"
