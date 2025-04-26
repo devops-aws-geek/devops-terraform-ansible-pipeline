@@ -2,6 +2,7 @@ pipeline {
      agent any
      parameters {
         string(name: 'environment', defaultValue: 'terraform', description: 'Workspace/environment file to use for deployment')
+        string(name: 'tag', defaultValue: 'feature', description: 'tag are specific to branch ex feature|dev|main')
         booleanParam(name: 'autoApprove', defaultValue: false, description: 'Automatically run apply after generating plan?')
         booleanParam(name: 'destroy', defaultValue: false, description: 'Destroy Terraform build?')
 
