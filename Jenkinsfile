@@ -15,6 +15,10 @@ pipeline {
      stages {
           stage("Compile") {
 	      when {
+                anyOf {
+                  branch 'feature'
+                  branch 'dev'
+                }
                 not {
                     equals expected: true, actual: params.destroy
                 }
@@ -25,6 +29,10 @@ pipeline {
           }
           stage("Unit test") {
 	      when {
+                anyOf {
+                  branch 'feature'
+                  branch 'dev'
+                }        
                 not {
                     equals expected: true, actual: params.destroy
                 }
@@ -34,8 +42,12 @@ pipeline {
                }
           }
 	     
-	  stage('SonarQube analysis') {
+	  stage('SonarQube Analysis') {
 		when {
+                anyOf {
+                  branch 'feature'
+                  branch 'dev'
+                }        
                 not {
                     equals expected: true, actual: params.destroy
                 }
@@ -48,6 +60,10 @@ pipeline {
           }
           
 	  stage("Quality Gate"){
+            anyOf {
+                  branch 'feature'
+                  branch 'dev'
+                }
 		      when {
                 not {
                     equals expected: true, actual: params.destroy
@@ -67,6 +83,10 @@ pipeline {
      
           stage("Package") {
 		      when {
+                anyOf {
+                  branch 'feature'
+                  branch 'dev'
+                }  
                 not {
                     equals expected: true, actual: params.destroy
                 }
@@ -77,20 +97,31 @@ pipeline {
           }
          stage("Docker build"){
 	      when {
+                anyOf {
+                  branch 'feature'
+                  branch 'dev'
+                  branch 'main'
+                }
                 not {
                     equals expected: true, actual: params.destroy
                 }
               }		 
 	       steps {
                     sh 'docker version'
-                    sh 'docker build -t devopswithdeepak-docker-webapp-demo .'
+                    def tag = env.BRANCH_NAME.replace('/', '-')
+                    sh 'docker build -t devopswithdeepak-docker-webapp-demo:${tag} .'
                     sh 'docker image list'
-                    sh 'docker tag devopswithdeepak-docker-webapp-demo deepak2717/devopswithdeepak-docker-webapp-demo:v6.0'
+                    sh 'docker tag devopswithdeepak-docker-webapp-demo:${tag} deepak2717/devopswithdeepak-docker-webapp-demo:${tag}'
 		
                }
           }
          stage("Docker Login") {
 	      when {
+                anyOf {
+                  branch 'feature'
+                  branch 'dev'
+                  branch 'main'
+                } 
                 not {
                     equals expected: true, actual: params.destroy
                 }
@@ -98,37 +129,64 @@ pipeline {
                steps {
 	            withCredentials([string(credentialsId: 'DOCKER_HUB_PASSWORD', variable: 'DOCKER_HUB_PASSWORD')]) {   
                      sh 'docker login -u deepak2717 -p $DOCKER_HUB_PASSWORD'
-	       }
+	            }
               }
          }
 
          stage("Push Image to Docker Hub"){
 	      when {
+                anyOf {
+                  branch 'feature'
+                  branch 'dev'
+                  branch 'main'
+                }
                 not {
                     equals expected: true, actual: params.destroy
                 }
               }		 
                steps {
-                     sh 'docker push  deepak2717/devopswithdeepak-docker-webapp-demo:v6.0'
+                     def tag = env.BRANCH_NAME.replace('/', '-')
+                     sh 'docker push  deepak2717/devopswithdeepak-docker-webapp-demo:${tag}'
                 }
          }
          stage('Plan') {
             when {
+                anyOf {
+                  branch 'feature'
+                  branch 'dev'
+                  branch 'main'
+                }
                 not {
                     equals expected: true, actual: params.destroy
                 }
             }
             
             steps {
-                sh 'terraform init -input=false'
-                sh 'terraform workspace select ${environment} || terraform workspace new ${environment}'
-
-                sh "terraform plan -input=false -out tfplan "
-                sh 'terraform show -no-color tfplan > tfplan.txt'
+                script {
+                   def tfvarsFile = ""
+                        if (env.BRANCH_NAME == 'dev') {
+                            tfvarsFile = "dev.tfvars"
+                        } else if (env.BRANCH_NAME == 'main') {
+                            tfvarsFile = "main.tfvars"
+                        } else if (env.BRANCH_NAME.startsWith('feature/')) {
+                            tfvarsFile = "feature.tfvars"
+                        } else {
+                            error "No tfvars file defined for branch ${env.BRANCH_NAME}"
+                        }    
+                        sh 'terraform init -input=false'
+                        sh 'terraform workspace select ${environment} || terraform workspace new ${environment}'
+                        sh "terraform plan -input=false -var-file=${tfvarsFile} -out tfplan "
+                        sh 'terraform show -no-color tfplan > tfplan.txt'
+                }
             }
         }
         stage('Approval') {
            when {
+                anyOf {
+                  branch 'feature'
+                  branch 'dev'
+                  branch 'main'
+                }
                not {
                    equals expected: true, actual: params.autoApprove
                }
@@ -151,13 +209,30 @@ pipeline {
 
         stage('Apply') {
             when {
+                anyOf {
+                  branch 'feature'
+                  branch 'dev'
+                  branch 'main'
+                }
                 not {
                     equals expected: true, actual: params.destroy
                 }
             }
             
             steps {
-                sh "terraform apply -input=false tfplan"
+               script {
+                   def tfvarsFile = ""
+                        if (env.BRANCH_NAME == 'dev') {
+                            tfvarsFile = "dev.tfvars"
+                        } else if (env.BRANCH_NAME == 'main') {
+                            tfvarsFile = "main.tfvars"
+                        } else if (env.BRANCH_NAME.startsWith('feature/')) {
+                            tfvarsFile = "feature.tfvars"
+                        } else {
+                            error "No tfvars file defined for branch ${env.BRANCH_NAME}"
+                        } 
+                        sh "terraform apply -input=false -var-file=${tfvarsFile} tfplan"
+               }
             }
         }
         
