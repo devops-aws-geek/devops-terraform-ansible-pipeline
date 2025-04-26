@@ -252,8 +252,20 @@ pipeline {
             }
         
         steps {
-           sh "terraform destroy --auto-approve"
+	script {
+                   def tfvarsFile = ""
+                        if (env.BRANCH_NAME == 'dev') {
+                            tfvarsFile = "dev.tfvars"
+                        } else if (env.BRANCH_NAME == 'main') {
+                            tfvarsFile = "main.tfvars"
+                        } else if (env.BRANCH_NAME == 'feature') {
+                            tfvarsFile = "feature.tfvars"
+                        } else {
+                            error "No tfvars file defined for branch ${env.BRANCH_NAME}"
+                        } 
+           sh "terraform destroy -var-file=${tfvarsFile} --auto-approve"
         }
+	}
     }
 
      }
