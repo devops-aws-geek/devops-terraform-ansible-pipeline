@@ -13,6 +13,15 @@ pipeline {
         AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
     }
      stages {
+          stage('Checkout') {
+            steps {
+                checkout scm
+                script {
+                    env.BRANCH_NAME = sh(script: "git rev-parse --abbrev-ref HEAD", returnStdout: true).trim()
+                    echo "Current branch: ${env.BRANCH_NAME}"
+                }
+            }
+        }
           stage("Compile") {
 	        when {
                  anyOf {
