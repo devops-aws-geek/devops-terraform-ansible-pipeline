@@ -182,9 +182,10 @@ pipeline {
                             tfvarsFile = "feature.tfvars"
                         } else {
                             error "No tfvars file defined for branch ${env.BRANCH_NAME}"
-                        }    
+                        }
+                        def tag = env.BRANCH_NAME.replace('/', '-')    
                         sh 'terraform init -input=false'
-                        sh 'terraform workspace select ${environment} || terraform workspace new ${environment}'
+                        sh "terraform workspace select ${environment}-${tag} || terraform workspace new ${environment}-${tag}"
                         sh "terraform plan -input=false -var-file=${tfvarsFile} -out tfplan "
                         sh 'terraform show -no-color tfplan > tfplan.txt'
                 }
@@ -205,9 +206,6 @@ pipeline {
                 }
            }
            
-                
-            
-
            steps {
                script {
                     def plan = readFile 'tfplan.txt'
