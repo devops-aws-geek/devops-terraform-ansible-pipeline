@@ -118,9 +118,9 @@ pipeline {
               script {
                     def tag = env.BRANCH_NAME.replace('/', '-')
                     echo "Using Docker tag: ${tag}"
-                    sh 'docker build -t devopswithdeepak-docker-webapp-demo:${tag} .'
-                    sh 'docker image list'
-                    sh 'docker tag devopswithdeepak-docker-webapp-demo:${tag} deepak2717/devopswithdeepak-docker-webapp-demo:${tag}'
+                    sh "docker build -t devopswithdeepak-docker-webapp-demo:${tag} ."
+                    sh "docker image list"
+                    sh "docker tag devopswithdeepak-docker-webapp-demo:${tag} deepak2717/devopswithdeepak-docker-webapp-demo:${tag}"
                 }
             }
           }
@@ -155,7 +155,7 @@ pipeline {
                   script {
                      env.BRANCH_NAME = env.GIT_BRANCH?.replaceFirst(/^origin\//, '')
                      def tag = env.BRANCH_NAME.replace('/', '-')
-                     sh 'docker push  deepak2717/devopswithdeepak-docker-webapp-demo:${tag}'
+                     sh "docker push  deepak2717/devopswithdeepak-docker-webapp-demo:${tag}"
                   }
                 }
          }
