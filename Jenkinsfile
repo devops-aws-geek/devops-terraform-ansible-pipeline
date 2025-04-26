@@ -17,10 +17,9 @@ pipeline {
             steps {
                 checkout scm
                 script {
-                       def branchName = sh(script: "git symbolic-ref --short HEAD || git rev-parse --short HEAD", returnStdout: true).trim()
-                        env.BRANCH_NAME = branchName
-                        echo "Actual branch name: ${env.BRANCH_NAME}"
-                    }
+                    env.BRANCH_NAME = env.GIT_BRANCH?.replaceFirst(/^origin\//, '')
+                    echo "Branch after checkout: ${env.BRANCH_NAME}"
+                }
                 }
         }
           stage("Compile") {
