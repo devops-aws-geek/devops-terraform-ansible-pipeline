@@ -17,10 +17,11 @@ pipeline {
             steps {
                 checkout scm
                 script {
-                    env.BRANCH_NAME = sh(script: "git rev-parse --abbrev-ref HEAD", returnStdout: true).trim()
-                    echo "Current branch: ${env.BRANCH_NAME}"
+                       def branchName = sh(script: "git symbolic-ref --short HEAD || git rev-parse --short HEAD", returnStdout: true).trim()
+                        env.BRANCH_NAME = branchName
+                        echo "Actual branch name: ${env.BRANCH_NAME}"
+                    }
                 }
-            }
         }
           stage("Compile") {
 	        when {
