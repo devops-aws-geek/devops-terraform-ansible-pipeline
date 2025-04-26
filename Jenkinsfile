@@ -254,18 +254,7 @@ pipeline {
             }
         
         steps {
-	script {
-                   def tfvarsFile = ""
-                        if (env.BRANCH_NAME == 'dev') {
-                            tfvarsFile = "dev.tfvars"
-                        } else if (env.BRANCH_NAME == 'main') {
-                            tfvarsFile = "main.tfvars"
-                        } else if (env.BRANCH_NAME == 'feature') {
-                            tfvarsFile = "feature.tfvars"
-                        } else {
-                            error "No tfvars file defined for branch ${env.BRANCH_NAME}"
-                        }
-           def tag = env.BRANCH_NAME.replace('/', '-')
+	script {              
            sh "terraform init -input=false"
            sh "terraform workspace select ${environment}-${tag} || terraform workspace new ${environment}-${tag}" 
            sh "terraform destroy -input=false -var-file=${tfvarsFile} --auto-approve"
