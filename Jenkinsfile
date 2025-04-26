@@ -2,6 +2,7 @@ pipeline {
      agent any
      parameters {
         string(name: 'environment', defaultValue: 'terraform', description: 'Workspace/environment file to use for deployment')
+        string(name: 'tag', defaultValue: 'feature', description: 'tag are specific to branch ex feature|dev|main')
         booleanParam(name: 'autoApprove', defaultValue: false, description: 'Automatically run apply after generating plan?')
         booleanParam(name: 'destroy', defaultValue: false, description: 'Destroy Terraform build?')
 
@@ -238,7 +239,10 @@ pipeline {
                             tfvarsFile = "feature.tfvars"
                         } else {
                             error "No tfvars file defined for branch ${env.BRANCH_NAME}"
-                        } 
+                        }
+                        def tag = env.BRANCH_NAME.replace('/', '-')
+                        sh "terraform init -input=false"
+                        sh "terraform workspace select ${environment}-${tag} || terraform workspace new ${environment}-${tag}" 
                         sh "terraform apply -input=false -var-file=${tfvarsFile} tfplan"
                }
             }
@@ -250,18 +254,10 @@ pipeline {
             }
         
         steps {
-	script {
-                   def tfvarsFile = ""
-                        if (env.BRANCH_NAME == 'dev') {
-                            tfvarsFile = "dev.tfvars"
-                        } else if (env.BRANCH_NAME == 'main') {
-                            tfvarsFile = "main.tfvars"
-                        } else if (env.BRANCH_NAME == 'feature') {
-                            tfvarsFile = "feature.tfvars"
-                        } else {
-                            error "No tfvars file defined for branch ${env.BRANCH_NAME}"
-                        } 
-           sh "terraform destroy -var-file=${tfvarsFile} --auto-approve"
+	script {              
+           sh "terraform init -input=false"
+           sh "terraform workspace select ${environment}-${tag} || terraform workspace new ${environment}-${tag}" 
+           sh "terraform destroy -input=false -var-file=${tfvarsFile} --auto-approve"
         }
 	}
     }
