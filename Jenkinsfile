@@ -26,7 +26,7 @@ pipeline {
 	        when {
                  anyOf {
                      branch 'dev'
-                     branch 'main'
+                     branch 'feature'
                  }
                  not {
                     equals expected: true, actual: params.destroy
@@ -117,6 +117,7 @@ pipeline {
 	       steps {
               script {
                     sh 'docker version'
+                    env.BRANCH_NAME = env.GIT_BRANCH?.replaceFirst(/^origin\//, '')
                     def tag = env.BRANCH_NAME.replace('/', '-')
                     sh 'docker build -t devopswithdeepak-docker-webapp-demo:${tag} .'
                     sh 'docker image list'
@@ -153,6 +154,7 @@ pipeline {
               }		 
                steps {
                   script {
+                     env.BRANCH_NAME = env.GIT_BRANCH?.replaceFirst(/^origin\//, '')
                      def tag = env.BRANCH_NAME.replace('/', '-')
                      sh 'docker push  deepak2717/devopswithdeepak-docker-webapp-demo:${tag}'
                   }
